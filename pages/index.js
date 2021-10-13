@@ -1,5 +1,7 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
+import InfiniteScroll from "react-infinite-scroll-component";
+
 
 import useSWR from 'swr'
 import { useState } from 'react';
@@ -26,6 +28,7 @@ export const getStaticProps = async () =>{
 export default function Home({ data }) {
   const [searchTerm, setSearchTerm]=useState('');
   const [filteredPokemon, setFilteredPokemon]=useState('');
+  const [newData, setNewData]=useState(data.results);
 
   const filterPokemon = (textToSearch) =>{
     const allPokemon=data.results;
@@ -60,9 +63,9 @@ export default function Home({ data }) {
    }
    return(
   data
-    .map((pokemon)=>{
+    .map((pokemon, id)=>{
     return ( 
-      <div key={pokemon.name} className="justify-self-center" >
+      <div key={id} className="justify-self-center" >
         {GetImage(pokemon.url)}
         <h2 className="text-gray-900 leading-tight">{pokemon.name}</h2>
       </div>
@@ -71,6 +74,7 @@ export default function Home({ data }) {
   
    );
  }
+
 
 const ShowVal = () => {
   const pokemonNames = ["bulbasaur", "ivysaur", "venusaur","charmander","charmeleon","charizard","squirtle", "wartortle", "blastoise", "caterpie", "metapod", "butterfree", "weedle","kakuna","beedrill","pidgey","pidgeotto","pidgeot","rattata","raticate"];
@@ -82,25 +86,42 @@ const ShowVal = () => {
       
     })
     .map(name=>{
-      return <div className=" w-96 bg-gray-50 shadow	" key={name}>{name}</div>
+      return <div className="  w-40 md:w-96 bg-gray-50 shadow	" key={name}>{name}</div>
     })}
   </div>
 }
+const getData = async() =>{
+  const res = await fetch(`https://pokeapi.co/api/v2/pokemon`);
+  const newDataVal = await res.json();
+  setNewData((newData) => [...newData, ...newDataVal.results]);
+}
   return (
     <div className="m-10 ">
+      <Head>
+        <title>Pokemon App</title>
+      </Head>
+      
       <center>
       <input 
         type="text" 
-        className="border-2 border-gray-200 h-14 w-96 pr-8 pl-5 rounded z-0 focus:shadow, border-blue-200 focus:outline-none" 
+        className="border-2 border-gray-200 h-14 w-40 md:w-96 pr-8 pl-5 rounded z-0 focus:shadow, border-blue-200 focus:outline-none" 
         placeholder="Search Pokemon" 
         onChange={handleSearch} 
         value={searchTerm}
       />
       {searchTerm.length>0 ? <ShowVal /> :null}
       </center>
+      <InfiniteScroll
+        dataLength={newData.length}
+        next={getData}
+        hasMore={true}
+        loader={<h3> Loading...</h3>}
+        endMessage={<h4>Nothing more to show</h4>}
+      >
       <div className="grid md:grid-cols-4 grid-cols-3">
-       {searchTerm.length>0 ? <Display data={filteredPokemon} />: <Display data={data.results} />}
+       {searchTerm.length>0 ? <Display data={filteredPokemon} />: <Display data={newData} />}
       </div> 
+      </InfiniteScroll>
     </div>
   )
 }
