@@ -10,7 +10,6 @@ export const getStaticProps = async () =>{
   const res = await fetch('https://pokeapi.co/api/v2/pokemon');
   const data = await res.json();
   if (!data) {
-//    setPokemon(data)
     return {
       redirect: {
         destination: '/',
@@ -74,13 +73,13 @@ export default function Home({ data }) {
  }
 
 const ShowVal = () => {
-  const pokemonNames = [,"raticate","bulbasaur", "ivysaur", "venusaur","charmander","charmeleon","charizard","squirtle", "wartortle", "blastoise", "caterpie", "metapod", "butterfree", "weedle","kakuna","beedrill","pidgey","pidgeotto","pidgeot","rattata"];
+  const pokemonNames = ["bulbasaur", "ivysaur", "venusaur","charmander","charmeleon","charizard","squirtle", "wartortle", "blastoise", "caterpie", "metapod", "butterfree", "weedle","kakuna","beedrill","pidgey","pidgeotto","pidgeot","rattata","raticate"];
   return <div>
     {pokemonNames.filter((name) => {
       if(name.toLowerCase().includes(searchTerm.toLowerCase())){
         return name;
-      
       }
+      
     })
     .map(name=>{
       return <div className=" w-96 bg-gray-50 shadow	" key={name}>{name}</div>
@@ -90,11 +89,17 @@ const ShowVal = () => {
   return (
     <div className="m-10 ">
       <center>
-      <input autoComplete="on" type="text" className="border-2 border-blue-200 h-14 w-96 pr-8 pl-5 rounded z-0 focus:shadow focus:outline-none" placeholder="Search pokemon" onChange={handleSearch} value={searchTerm}/>
+      <input 
+        type="text" 
+        className="border-2 border-gray-200 h-14 w-96 pr-8 pl-5 rounded z-0 focus:shadow, border-blue-200 focus:outline-none" 
+        placeholder="Search Pokemon" 
+        onChange={handleSearch} 
+        value={searchTerm}
+      />
       {searchTerm.length>0 ? <ShowVal /> :null}
       </center>
       <div className="grid md:grid-cols-4 grid-cols-3">
-       {searchTerm ? <Display data={filteredPokemon} />: <Display data={data.results} />}
+       {searchTerm.length>0 ? <Display data={filteredPokemon} />: <Display data={data.results} />}
       </div> 
     </div>
   )
