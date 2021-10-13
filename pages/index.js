@@ -38,7 +38,7 @@ export default function Home({ data }) {
   }
 
 
-  const getImage=(url)=>{    
+  const GetImage=(url)=>{    
     const { data, error } = useSWR(url, fetcher) //to get the images
         if (error) return <div>failed to load</div>
         if (!data) return <div>loading...</div>
@@ -63,7 +63,7 @@ export default function Home({ data }) {
     .map((pokemon)=>{
     return ( 
       <div key={pokemon.name} className="justify-self-center" >
-        {getImage(pokemon.url)}
+        {GetImage(pokemon.url)}
         <h2 className="text-gray-900 leading-tight">{pokemon.name}</h2>
       </div>
       )
